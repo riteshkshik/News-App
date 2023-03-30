@@ -3,6 +3,7 @@ package com.example.newapp
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newapp.api.news_api_call
 import com.example.newapp.databinding.ActivityMainBinding
@@ -59,5 +60,11 @@ class MainActivity : AppCompatActivity() {
 
         val adapter = NewsAdapter(this, newsList)
         binding?.reclerViewMain?.adapter = adapter
+        adapter.setOnItemClickListner(object : NewsAdapter.onItemClickListner{
+            override fun onItemClick(position: Int) {
+                Toast.makeText(this@MainActivity, position.toString(), Toast.LENGTH_SHORT).show()
+            }
+
+        })
     }
 }

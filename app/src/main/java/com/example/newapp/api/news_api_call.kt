@@ -6,9 +6,9 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface news_api_call {
-    @GET("top-headlines")
+    @GET("everything")
     fun send_request(
-        @Query("country") country: String,
+        @Query("q") q: String,
         @Query("apiKey") apiKey: String
     ): Call<News>
 }
