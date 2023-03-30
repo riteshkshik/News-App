@@ -1,4 +1,4 @@
-package com.example.newapp
+package com.example.newapp.Adapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.newapp.R
 import com.example.newapp.models.Article
 
 class NewsAdapter(val context: Context, val newsList: List<Article>): RecyclerView.Adapter<NewsAdapter.MyViewHolder>() {
@@ -34,13 +35,13 @@ class NewsAdapter(val context: Context, val newsList: List<Article>): RecyclerVi
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsAdapter.MyViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.new_ui_for_newslist, parent, false)
         return MyViewHolder(view, mListner)
     }
 
-    override fun onBindViewHolder(holder: NewsAdapter.MyViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.title.text = newsList[position].title
         //holder.source.text = newsList[position].source.name
         Glide.with(holder.itemView.context).load(newsList[position].urlToImage).into(holder.img)

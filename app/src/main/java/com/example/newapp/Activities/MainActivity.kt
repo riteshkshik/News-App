@@ -1,10 +1,12 @@
-package com.example.newapp
+package com.example.newapp.Activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.newapp.Adapters.NewsAdapter
 import com.example.newapp.api.news_api_call
 import com.example.newapp.databinding.ActivityMainBinding
 import com.example.newapp.models.Article
@@ -43,7 +45,7 @@ class MainActivity : AppCompatActivity() {
                 //Log.d("lksjfsdlfjsdksdlf", json_from_response.toString())
                 val news = Gson().fromJson(json_from_response, News::class.java)
                 showDataToRecyclerView(news.articles)
-                Log.d("total_results", news.totalResults.toString())
+                Log.d("total_results", news.articles[0].description.toString())
             }
 
             override fun onFailure(call: Call<News>, t: Throwable) {
@@ -60,9 +62,13 @@ class MainActivity : AppCompatActivity() {
 
         val adapter = NewsAdapter(this, newsList)
         binding?.reclerViewMain?.adapter = adapter
-        adapter.setOnItemClickListner(object : NewsAdapter.onItemClickListner{
+        adapter.setOnItemClickListner(object : NewsAdapter.onItemClickListner {
             override fun onItemClick(position: Int) {
-                Toast.makeText(this@MainActivity, position.toString(), Toast.LENGTH_SHORT).show()
+                val intent = Intent(this@MainActivity, DetailsActivity::class.java)
+                intent.putExtra("news_url", newsList[position].url)
+                startActivity(intent)
+
+                //Toast.makeText(this@MainActivity, position.toString(), Toast.LENGTH_SHORT).show()
             }
 
         })
