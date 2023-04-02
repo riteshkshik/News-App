@@ -1,13 +1,20 @@
 package com.example.newapp.Activities
 
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+//import android.widget.SearchView
+
+import androidx.appcompat.widget.SearchView
+
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newapp.Adapters.NewsAdapter
-import com.example.newapp.api.news_api_call
+import com.example.newapp.R
+import com.example.newapp.api.news_api_call_for_search_query
 import com.example.newapp.databinding.ActivityMainBinding
 import com.example.newapp.models.Article
 import com.example.newapp.models.News
@@ -28,17 +35,45 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
+        val toolbar = binding?.toolbar
+        setSupportActionBar(toolbar)
+
         CoroutineScope(Dispatchers.IO).launch{
-            test()
+            // todo implement top headlines api call
         }
     }
-    fun test(){
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_item, menu)
+        val item = menu?.findItem(R.id.search_action)
+        val searchView = item?.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                Toast.makeText(this@MainActivity, query, Toast.LENGTH_SHORT).show()
+                if (query != null && query.isNotEmpty()){
+                    CoroutineScope(Dispatchers.IO).launch{
+                        searchNewsFromQuery(query.toString())
+                    }
+                }
+
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+
+        })
+
+        return super.onCreateOptionsMenu(menu)
+    }
+    fun searchNewsFromQuery(query: String){
         val retrofitBuilder = Retrofit.Builder().baseUrl("https://newsapi.org/v2/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        val api_interface_object = retrofitBuilder.create(news_api_call::class.java);
-        val call = api_interface_object.send_request("in", "b869fe433b5841acbfd5c14a804d5837")
+        val api_interface_object = retrofitBuilder.create(news_api_call_for_search_query::class.java);
+        val call = api_interface_object.send_request(query, "b869fe433b5841acbfd5c14a804d5837")
         call.enqueue(object : Callback<News>{
             override fun onResponse(call: Call<News>, response: Response<News>) {
                 val json_from_response = Gson().toJson(response.body())

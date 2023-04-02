@@ -8,6 +8,15 @@
     android:background="#EFE8E8"
     tools:context=".Activities.MainActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/toolbar_backgroud"
+        app:title="Top Headlines"
+        app:titleTextColor="@color/white"
+        />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reclerView_main"
         android:layout_margin="8dp"
