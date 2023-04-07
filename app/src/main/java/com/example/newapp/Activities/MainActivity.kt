@@ -34,6 +34,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MainActivity : AppCompatActivity() {
     var binding: ActivityMainBinding? = null
     var savedNewsList: List<Article>? = null
+    var isSearchViewUser = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -87,6 +88,7 @@ class MainActivity : AppCompatActivity() {
                 if (query != null && query.isNotEmpty()){
                     CoroutineScope(Dispatchers.Main).launch{
                         item.collapseActionView()
+                        isSearchViewUser = true
                         searchNewsFromQuery(query.toString())
                     }
                 }
@@ -142,12 +144,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-
-        if (savedNewsList == null){
-            super.onBackPressed()
-        }else{
+        if (isSearchViewUser){
             showDataToRecyclerView(savedNewsList!!)
-            savedNewsList = null
+            isSearchViewUser = false
+        }else{
+            super.onBackPressed()
         }
     }
 }
