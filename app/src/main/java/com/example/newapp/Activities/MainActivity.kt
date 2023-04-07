@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.View
 //import android.widget.SearchView
 
 import androidx.appcompat.widget.SearchView
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newapp.Adapters.NewsAdapter
 import com.example.newapp.R
 import com.example.newapp.api.news_api_call_for_search_query
+import com.example.newapp.api.news_api_call_for_top_headlines
 import com.example.newapp.databinding.ActivityMainBinding
 import com.example.newapp.models.Article
 import com.example.newapp.models.News
@@ -35,23 +37,52 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
-        val toolbar = binding?.toolbar
-        setSupportActionBar(toolbar)
+        setSupportActionBar()
 
         CoroutineScope(Dispatchers.IO).launch{
-            // todo implement top headlines api call
+            topHeadLinesNews()
+        }
+        binding?.backPressButton?.setOnClickListener {
+            onBackPressed()
         }
     }
 
+    fun setSupportActionBar(){
+        val toolbar = binding?.toolbar
+        setSupportActionBar(toolbar)
+        val actionBar = supportActionBar
+    }
+
+    fun topHeadLinesNews(){
+        binding?.pgBar?.visibility = View.VISIBLE
+        val retrofitBuilder = Retrofit.Builder().baseUrl("https://newsapi.org/v2/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        val api_interface_object = retrofitBuilder.create(news_api_call_for_top_headlines::class.java);
+        val call = api_interface_object.send_request("in", "b869fe433b5841acbfd5c14a804d5837")
+        call.enqueue(object : Callback<News>{
+            override fun onResponse(call: Call<News>, response: Response<News>) {
+                val json_from_response = Gson().toJson(response.body())
+                val news = Gson().fromJson(json_from_response, News::class.java)
+                showDataToRecyclerView(news.articles)
+                binding?.pgBar?.visibility = View.GONE
+            }
+
+            override fun onFailure(call: Call<News>, t: Throwable) {
+                binding?.pgBar?.visibility = View.GONE
+            }
+
+        })
+    }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_item, menu)
         val item = menu?.findItem(R.id.search_action)
         val searchView = item?.actionView as SearchView
+//        searchView.maxWidth = Int.MAX_VALUE
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
-                Toast.makeText(this@MainActivity, query, Toast.LENGTH_SHORT).show()
                 if (query != null && query.isNotEmpty()){
-                    CoroutineScope(Dispatchers.IO).launch{
+                    CoroutineScope(Dispatchers.Main).launch{
                         searchNewsFromQuery(query.toString())
                     }
                 }
@@ -68,6 +99,7 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
     fun searchNewsFromQuery(query: String){
+        binding?.pgBar?.visibility = View.VISIBLE
         val retrofitBuilder = Retrofit.Builder().baseUrl("https://newsapi.org/v2/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -77,14 +109,13 @@ class MainActivity : AppCompatActivity() {
         call.enqueue(object : Callback<News>{
             override fun onResponse(call: Call<News>, response: Response<News>) {
                 val json_from_response = Gson().toJson(response.body())
-                //Log.d("lksjfsdlfjsdksdlf", json_from_response.toString())
                 val news = Gson().fromJson(json_from_response, News::class.java)
                 showDataToRecyclerView(news.articles)
-                Log.d("total_results", news.articles[0].description.toString())
+                binding?.pgBar?.visibility = View.GONE
             }
 
             override fun onFailure(call: Call<News>, t: Throwable) {
-                Log.d("lksjfsdlfjsdksdlf", "failed")
+                binding?.pgBar?.visibility = View.GONE
             }
 
         })
@@ -102,8 +133,6 @@ class MainActivity : AppCompatActivity() {
                 val intent = Intent(this@MainActivity, DetailsActivity::class.java)
                 intent.putExtra("news_url", newsList[position].url)
                 startActivity(intent)
-
-                //Toast.makeText(this@MainActivity, position.toString(), Toast.LENGTH_SHORT).show()
             }
 
         })
