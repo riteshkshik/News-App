@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.View
+import android.widget.ImageView
 //import android.widget.SearchView
 
 import androidx.appcompat.widget.SearchView
@@ -32,6 +33,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
     var binding: ActivityMainBinding? = null
+    var savedNewsList: List<Article>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -64,6 +66,7 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call<News>, response: Response<News>) {
                 val json_from_response = Gson().toJson(response.body())
                 val news = Gson().fromJson(json_from_response, News::class.java)
+                savedNewsList = news.articles
                 showDataToRecyclerView(news.articles)
                 binding?.pgBar?.visibility = View.GONE
             }
@@ -78,15 +81,15 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu_item, menu)
         val item = menu?.findItem(R.id.search_action)
         val searchView = item?.actionView as SearchView
-//        searchView.maxWidth = Int.MAX_VALUE
+        searchView.queryHint = "Search Worldwide..."
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null && query.isNotEmpty()){
                     CoroutineScope(Dispatchers.Main).launch{
+                        item.collapseActionView()
                         searchNewsFromQuery(query.toString())
                     }
                 }
-
                 return false
             }
 
@@ -136,5 +139,15 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    override fun onBackPressed() {
+
+        if (savedNewsList == null){
+            super.onBackPressed()
+        }else{
+            showDataToRecyclerView(savedNewsList!!)
+            savedNewsList = null
+        }
     }
 }
