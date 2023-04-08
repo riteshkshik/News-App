@@ -139,7 +139,6 @@ class MainActivity : AppCompatActivity() {
                 intent.putExtra("news_url", newsList[position].url)
                 startActivity(intent)
             }
-
         })
     }
 
@@ -155,7 +154,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    // test commit
+    // test commit1
 
 
 
