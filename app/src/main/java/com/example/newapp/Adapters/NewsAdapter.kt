@@ -1,15 +1,24 @@
 package com.example.newapp.Adapters
 
 import android.content.Context
+import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.newapp.R
 import com.example.newapp.models.Article
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.Period
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 class NewsAdapter(val context: Context, val newsList: List<Article>): RecyclerView.Adapter<NewsAdapter.MyViewHolder>() {
 
@@ -26,7 +35,7 @@ class NewsAdapter(val context: Context, val newsList: List<Article>): RecyclerVi
 
     inner class MyViewHolder(itemView: View, listner: onItemClickListner): RecyclerView.ViewHolder(itemView){
         var title = itemView.findViewById<TextView>(R.id.text_title)
-        //var source = itemView.findViewById<TextView>(R.id.text_source)
+        var published_date = itemView.findViewById<TextView>(R.id.published_date)
         var img = itemView.findViewById<ImageView>(R.id.img_headline)
         init {
             itemView.setOnClickListener {
@@ -37,14 +46,38 @@ class NewsAdapter(val context: Context, val newsList: List<Article>): RecyclerVi
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val inflater = LayoutInflater.from(context)
-        val view = inflater.inflate(R.layout.new_ui_for_newslist, parent, false)
+        val view = inflater.inflate(R.layout.ui_for_recyclerview_item, parent, false)
         return MyViewHolder(view, mListner)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.title.text = newsList[position].title
-        //holder.source.text = newsList[position].source.name
-        Glide.with(holder.itemView.context).load(newsList[position].urlToImage).into(holder.img)
+        val imageUrl = newsList[position].urlToImage
+        val date = newsList[position].publishedAt
+        if (date.isNullOrEmpty()){
+            holder.published_date.text = ""
+        }else{
+
+            val then = run {
+                val oldDate = LocalDate.parse(date.substring(0,10), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                val oldTime = LocalTime.parse(date.substring(11,16), DateTimeFormatter.ofPattern("HH:mm"))
+                oldDate.atTime(oldTime)
+            }
+            val now = LocalDateTime.now()
+            val hours = then.until(now, ChronoUnit.HOURS)
+
+            holder.published_date.text = "${hours} hrs ago"
+
+
+        }
+        if (imageUrl.isNullOrEmpty()){
+            holder.img.setImageResource(R.drawable.breaking_news_img)
+        }else{
+            Glide.with(holder.itemView.context).load(newsList[position].urlToImage).into(holder.img)
+        }
+
+
     }
 
     override fun getItemCount(): Int {
