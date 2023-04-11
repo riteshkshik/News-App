@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.newapp.R
 import com.example.newapp.models.Article
 import java.time.LocalDate
@@ -66,15 +67,24 @@ class NewsAdapter(val context: Context, val newsList: List<Article>): RecyclerVi
             }
             val now = LocalDateTime.now()
             val hours = then.until(now, ChronoUnit.HOURS)
+            val days = then.until(now, ChronoUnit.DAYS)
 
-            holder.published_date.text = "${hours} hrs ago"
+            if (hours <= 48){
+                holder.published_date.text = "${hours} hrs ago"
+            }else{
+                holder.published_date.text = "${days} days ago"
+            }
 
 
         }
         if (imageUrl.isNullOrEmpty()){
             holder.img.setImageResource(R.drawable.breaking_news_img)
         }else{
-            Glide.with(holder.itemView.context).load(newsList[position].urlToImage).into(holder.img)
+            Glide.with(holder.itemView.context)
+                .load(newsList[position].urlToImage)
+                .thumbnail(0.05f)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(holder.img)
         }
 
 

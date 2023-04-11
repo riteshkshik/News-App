@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newapp.Activities.DetailsActivity
+import com.example.newapp.Activities.MainActivity
 import com.example.newapp.Adapters.NewsAdapter
 import com.example.newapp.R
 import com.example.newapp.api.request_api_call_for_top_headlines
@@ -37,7 +38,9 @@ class healthNewsFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_health_news, container, false)
         recyclerViewFragment = view.findViewById(R.id.health_news_recyclerView)
-        CoroutineScope(Dispatchers.IO).launch { topHeadLinesNews(Constants.HEALTH) }
+        if (MainActivity.healthNewsData == null){
+            CoroutineScope(Dispatchers.IO).launch { topHeadLinesNews(Constants.HEALTH) }
+        }else showDataToRecyclerView(MainActivity.healthNewsData!!)
         return view
     }
 
@@ -54,6 +57,7 @@ class healthNewsFragment : Fragment() {
                 val json_from_response = Gson().toJson(response.body())
                 val news = Gson().fromJson(json_from_response, News::class.java)
                 if (news != null) {
+                    MainActivity.healthNewsData = news.articles
                     showDataToRecyclerView(news.articles)
                 }else{
                     Toast.makeText(requireContext(), "Per Day Api request limit exceeded!", Toast.LENGTH_LONG).show()

@@ -118,4 +118,14 @@ class MainActivity : AppCompatActivity() {
 
         return super.onCreateOptionsMenu(menu)
     }
+
+    companion object {
+        var generalNewsData: List<Article>? = null
+        var entertainmentNewsData: List<Article>? = null
+        var technologyNewsData: List<Article>? = null
+        var scienceNewsData: List<Article>? = null
+        var businessNewsData: List<Article>? = null
+        var sportsNewsData: List<Article>? = null
+        var healthNewsData: List<Article>? = null
+    }
 }

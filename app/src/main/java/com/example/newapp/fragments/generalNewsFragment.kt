@@ -1,6 +1,8 @@
 package com.example.newapp.fragments
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -28,6 +30,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class generalNewsFragment : Fragment() {
     lateinit var recyclerViewFragment: RecyclerView
+//    private var newsData: List<Article>? = null
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreateView(
@@ -35,17 +38,35 @@ class generalNewsFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_general_news, container, false)
         recyclerViewFragment = view.findViewById(R.id.recyclerViewOfFragment)
-        CoroutineScope(Dispatchers.IO).launch {
-            topHeadLinesNews(Constants.GENERAL)
+
+
+        if (internectConnectivityCheck()){
+            if (MainActivity.generalNewsData == null){
+                CoroutineScope(Dispatchers.IO).launch {
+                    topHeadLinesNews(Constants.GENERAL)
+                }
+            }else{
+                showDataToRecyclerView(MainActivity.generalNewsData)
+            }
+        }else{
+            Toast.makeText(requireContext(), "Internet not connected", Toast.LENGTH_LONG).show()
         }
+
+
         return view
+    }
+
+    fun internectConnectivityCheck(): Boolean{
+        val connectivityManager = activity?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
     }
 
     fun topHeadLinesNews(category: String) {
         val retrofitBuilder = Retrofit.Builder().baseUrl("https://newsapi.org/v2/")
             .addConverterFactory(GsonConverterFactory.create()).build()
         val api_interface_object =
-            retrofitBuilder.create(request_api_call_for_top_headlines::class.java);
+            retrofitBuilder.create(request_api_call_for_top_headlines::class.java)
         val call = api_interface_object.send_request(
             "in", category = category, Constants.API_KEY
         )
@@ -54,6 +75,7 @@ class generalNewsFragment : Fragment() {
                 val json_from_response = Gson().toJson(response.body())
                 val news = Gson().fromJson(json_from_response, News::class.java)
                 if (news != null) {
+                    MainActivity.generalNewsData = news.articles
                     showDataToRecyclerView(news.articles)
                 }else{
                     Toast.makeText(requireContext(), "Per Day Api request limit exceeded!", Toast.LENGTH_LONG).show()
@@ -69,7 +91,8 @@ class generalNewsFragment : Fragment() {
     }
 
 
-    fun showDataToRecyclerView(newsList: List<Article>) {
+    fun showDataToRecyclerView(newsList: List<Article>?) {
+        if (newsList == null) return
         val layoutManager = LinearLayoutManager(requireContext())
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerViewFragment.layoutManager = layoutManager
