@@ -1,10 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/recyclerViewOfFragment"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context=".fragments.generalNewsFragment">
 
+    <TextView
+        android:layout_margin="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Breaking News"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        />
 
-</androidx.recyclerview.widget.RecyclerView>
+    <com.jama.carouselview.CarouselView
+        android:visibility="visible"
+        android:id="@+id/carouselView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:enableSnapping="true"
+        app:scaleOnScroll="false"
+        app:setAutoPlay="true"
+        app:setAutoPlayDelay="3000"
+        app:carouselOffset="center"
+        app:indicatorAnimationType="drop"
+        app:indicatorRadius="5"
+        app:indicatorPadding="5"
+        app:size="10"
+        app:spacing="10"
+        app:resource="@layout/image_carousel_item"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/recyclerViewOfFragment"/>
+
+
+</LinearLayout>

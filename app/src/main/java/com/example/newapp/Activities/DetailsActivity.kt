@@ -10,6 +10,7 @@ import android.webkit.WebViewClient
 import android.widget.Toast
 import com.example.newapp.R
 import com.example.newapp.databinding.ActivityDetailsBinding
+import com.example.newapp.utils.Constants
 
 class DetailsActivity : AppCompatActivity() {
     var binding: ActivityDetailsBinding? = null
@@ -18,8 +19,8 @@ class DetailsActivity : AppCompatActivity() {
         binding = ActivityDetailsBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
-        if (intent.hasExtra("news_url")){
-            val url: String? = intent.getStringExtra("news_url")
+        if (intent.hasExtra(Constants.NEWS_URL)){
+            val url: String? = intent.getStringExtra(Constants.NEWS_URL)
             if (url != null) {
                 binding?.webView?.loadUrl(url)
                 binding?.webView?.webViewClient = object: WebViewClient(){

@@ -2,7 +2,6 @@ package com.example.newapp.Adapters
 
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,6 @@ import com.example.newapp.models.Article
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
@@ -78,7 +76,7 @@ class NewsAdapter(val context: Context, val newsList: List<Article>): RecyclerVi
 
         }
         if (imageUrl.isNullOrEmpty()){
-            holder.img.setImageResource(R.drawable.breaking_news_img)
+            holder.img.setImageResource(R.drawable.carousel_placeholder_img)
         }else{
             Glide.with(holder.itemView.context)
                 .load(newsList[position].urlToImage)

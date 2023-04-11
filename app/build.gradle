@@ -56,4 +56,12 @@ dependencies {
     //glide
     implementation 'com.github.bumptech.glide:glide:4.13.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+
+    //picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+    //carousel
+    implementation 'com.github.jama5262:CarouselView:1.2.2'
+
+
 }

@@ -10,4 +10,5 @@ object Constants {
     const val SPORTS = "sports"
     const val SEARCHED_STRING = "searched_string"
     const val API_KEY = "5a3e054de1834138a2fbc4a75ee69053"
+    const val NEWS_URL = "news_url"
 }
