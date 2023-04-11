@@ -39,7 +39,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 class generalNewsFragment : Fragment() {
     lateinit var recyclerViewFragment: RecyclerView
     lateinit var carouselView: CarouselView
-//    private var newsData: List<Article>? = null
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreateView(
