@@ -76,7 +76,7 @@ class NewsAdapter(val context: Context, val newsList: List<Article>): RecyclerVi
 
         }
         if (imageUrl.isNullOrEmpty()){
-            holder.img.setImageResource(R.drawable.carousel_placeholder_img)
+            holder.img.setImageResource(R.drawable.breaking_news_img)
         }else{
             Glide.with(holder.itemView.context)
                 .load(newsList[position].urlToImage)
